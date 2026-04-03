@@ -138,7 +138,7 @@ async function fetchMapsUrls(maps) {
             await new Promise(resolve => setTimeout(resolve, 10000));
             [image] = await fetchElements(new URL(map.url, WEBSITE).href, 'img#MapViewerImage')
         };
-        console.log(`Lien trouvé : ${ image.src }`, );
+        console.log(`Lien trouvé : ${image.src}`,);
 
         result.push({
             name: map.name, url: image.src
@@ -158,8 +158,11 @@ async function saveMaps(plateforme, jeu, mapsUrls) {
     await fs.promises.mkdir(chemin, { recursive: true });
 
     const limit = pLimit(3);
+    const paddedLength = mapsUrls.length.toString().length;
+    console.log(paddedLength);
     const promises = mapsUrls.map((map, index) => {
-        const imagePath = path.resolve(chemin, sanitizePath(`000${index}-${map.url.split('/').at(-1)}`));
+        const basefileName = index.toString().padStart(paddedLength, '0') + '-' + map.url.split('/').at(-1);
+        const imagePath = path.resolve(chemin, sanitizePath(basefileName));
         return limit(() => downloadImage(map.url, imagePath));
     });
     await Promise.all(promises);
