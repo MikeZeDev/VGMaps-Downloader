@@ -158,8 +158,8 @@ async function saveMaps(plateforme, jeu, mapsUrls) {
     await fs.promises.mkdir(chemin, { recursive: true });
 
     const limit = pLimit(3);
-    const promises = mapsUrls.map(map => {
-        const imagePath = path.resolve(chemin, `${sanitizePath(map.url.split('/').at(-1))}`);
+    const promises = mapsUrls.map((map, index) => {
+        const imagePath = path.resolve(chemin, sanitizePath(`000${index}-${map.url.split('/').at(-1)}`));
         return limit(() => downloadImage(map.url, imagePath));
     });
     await Promise.all(promises);
